@@ -163,6 +163,9 @@ beh<-beh %>%
   filter(zone!="End") %>%
   mutate(proptime=time/totalduration)
 
+beh$stage <- fct_relevel(beh$stage, "Protonymph", "Deutonymph", "Tritonymph",  "Male", "Female")
+levels(beh$stage) # new col is not attached so must use data$
+
 
 ```
 
@@ -207,7 +210,7 @@ ggplot() +
 ## Total time spent on each temperature zone
 
 ```{r}
-colors<-c("#ff7f00", "#e41a1c", "#a65628", "#377eb8", "#984ea3")
+colors<-c("#ff7f00", "#e41a1c", "#a65628",  "#984ea3", "#377eb8")
 # To add the ID labels to the grid, remove the "strip.text.x = element_blank()" for in the code line: 
 #theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
 
@@ -510,22 +513,77 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_trial_females.jpg",  path="Outpu
 
 
 
-
-
-
-# Filtering the data
 ```{r}
+#Trial 2
+t2<-beh %>% filter(trial.x==2)
 
-df2<- df %>%
-select(!c(Phoresy, Phoresy.checked, Thermometer.beggining, Thermometer.camera, Thermometer.end, Observations)) %>%
-filter(!grepl("CPBS", Trial) ) %>%
-mutate(Treatment = as.character(Treatment),
-       Stage=as.factor(Stage))
+t22<-t2%>%
+  group_by(ID,stage, meantemptrial, zone) %>%
+  summarize(time=sum(time), proptime=sum(proptime))
+
+t23<-t2%>%
+  group_by(stage,meantemptrial, zone) %>%
+  summarize(time=sum(time), proptime=sum(proptime))
+
+levels(t22$stage)
+## Accumulated time
+
+### By individual
+ggplot(t22, aes(x=meantemptrial, y=time, fill=stage)) +geom_bar(stat="identity") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2 per ind")+
+  scale_fill_manual(values=colors)+
+  facet_wrap(vars(ID))
+
+ggsave(plot=last_plot(),filename="Acummtime_ind_trial_2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+### Total among all individuals
+ggplot(t23, aes(x=meantemptrial, y=time, fill=stage)) +geom_bar(stat="identity") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2")+
+  scale_fill_manual(values=colors) +
+  facet_wrap(vars(stage))
+
+ggsave(plot=last_plot(),filename="Acummtime_trial_2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+## Accumulated proportional time
+
+### By individual
+
+ggplot(t22, aes(x=meantemptrial, y=proptime, fill=stage)) +geom_bar(stat="identity") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2 per ind")+
+  scale_fill_manual(values=colors)+
+  facet_wrap(vars(ID))
+
+ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+### Total among all individuals
+ggplot(t23, aes(x=meantemptrial, y=time, fill=stage)) +geom_bar(stat="identity") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2")+
+  scale_fill_manual(values=colors) +
+  facet_wrap(vars(stage))
+
+ggsave(plot=last_plot(),filename="Acummtimeprop_trial_2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
 ```
+
+
+
+
 
 # Changing the order of Stage levels
 ```{r}
-df2$Stage <- fct_relevel(df2$Stage, "Protonymph", "Deutonymph", "Tritonymph", "Female", "Male")
-levels(df2$Stage) # new col is not attached so must use data$
+#df2$Stage <- fct_relevel(df2$Stage, "Protonymph", "Deutonymph", "Tritonymph", "Female", "Male")
+#levels(df2$Stage) # new col is not attached so must use data$
 ```
 
