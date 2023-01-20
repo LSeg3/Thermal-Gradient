@@ -219,28 +219,29 @@ colors<-c("#ff7f00", "#e41a1c", "#a65628",  "#984ea3", "#377eb8")
 protos<-beh %>% filter(stage=="Protonymph") 
 
 protos2<-protos%>%
-  group_by(ID, meantemptrial, zone) %>%
+  group_by(ID, meantemptrial, zone, trial.x) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 protos3<-protos%>%
-  group_by(meantemptrial, zone) %>%
+  group_by(meantempall, zone) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 
 ## Accumulated time
 
 ### By individual
-ggplot(protos2, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity", fill="#ff7f00") + 
+ggplot(protos2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Protonymphs by ID")+
-  facet_wrap(vars(ID))
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtime_ind_trial_Protos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(protos3, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity", fill="#ff7f00") + 
+ggplot(protos3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#ff7f00") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Protonymphs all together")
@@ -251,17 +252,18 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_Protos.jpg",  path="Outputs/Ex
 ## Accumulated proportional time
 
 ### By individual
-ggplot(protos2, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity",  fill="#ff7f00") + 
+ggplot(protos2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Protonymphs by ID")+
-  facet_wrap(vars(ID))
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Protonymphs by ID")+
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_Protos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(protos3, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity", fill="#ff7f00") + 
+ggplot(protos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#ff7f00") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Protonymphs all together")
@@ -275,11 +277,11 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_trial_Protos.jpg",  path="Output
 deutos<-beh %>% filter(stage=="Deutonymph")
 
 deutos2<-deutos%>%
-  group_by(ID, meantemptrial, zone) %>%
+  group_by(ID, meantemptrial, zone, trial.x) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 deutos3<-deutos%>%
-  group_by(meantemptrial, zone) %>%
+  group_by(meantempall, zone) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 
@@ -287,17 +289,18 @@ deutos3<-deutos%>%
 ## Accumulated time
 
 ### By individual
-ggplot(deutos2, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity",  fill="#e41a1c") + 
+ggplot(deutos2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Deutonymphs by ID")+
-  facet_wrap(vars(ID))
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtime_ind_trial_Deutos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(deutos3, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity", fill="#e41a1c") + 
+ggplot(deutos3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#e41a1c") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Deutonymphs all together")
@@ -308,17 +311,18 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_Deutos.jpg",  path="Outputs/Ex
 ## Accumulated proportional time
 
 ### By individual
-ggplot(deutos2, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity",  fill="#e41a1c") + 
+ggplot(deutos2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Deutonymphs by ID")+
-  facet_wrap(vars(ID))
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Deutonymphs by ID")+
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_Deutos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(deutos3, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity", fill="#e41a1c") + 
+ggplot(deutos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#e41a1c") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Deutonymphs all together")
@@ -332,11 +336,11 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_trial_Deutos.jpg",  path="Output
 tritos<-beh %>% filter(stage=="Tritonymph")
 
 tritos2<-tritos%>%
-  group_by(ID, meantemptrial, zone) %>%
+  group_by(ID, meantemptrial, zone, trial.x) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 tritos3<-tritos%>%
-  group_by(meantemptrial, zone) %>%
+  group_by(meantempall, zone) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 
@@ -344,17 +348,18 @@ tritos3<-tritos%>%
 ## Accumulated time
 
 ### By individual
-ggplot(tritos2, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity",  fill="#a65628") + 
+ggplot(tritos2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Tritonymphs by ID")+
-  facet_wrap(vars(ID))
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtime_ind_trial_tritos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(tritos3, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity", fill="#a65628") + 
+ggplot(tritos3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#a65628") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Tritonymphs all together")
@@ -365,17 +370,18 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_tritos.jpg",  path="Outputs/Ex
 ## Accumulated proportional time
 
 ### By individual
-ggplot(tritos2, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity",  fill="#a65628") + 
+ggplot(tritos2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Tritonymphs by ID")+
-  facet_wrap(vars(ID))
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Tritonymphs by ID")+
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_tritos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(tritos3, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity", fill="#a65628") + 
+ggplot(tritos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#a65628") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Tritonymphs all together")
@@ -390,11 +396,11 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_trial_tritos.jpg",  path="Output
 males<-beh %>% filter(stage=="Male")
 
 males2<-males%>%
-  group_by(ID, meantemptrial, zone) %>%
+  group_by(ID, meantemptrial, zone, trial.x) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 males3<-males%>%
-  group_by(meantemptrial, zone) %>%
+  group_by(meantempall, zone) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 
@@ -402,17 +408,17 @@ males3<-males%>%
 ## Accumulated time
 
 ### By individual
-ggplot(males2, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity",  fill="#984ea3") + 
+ggplot(males2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Males by ID")+
-  facet_wrap(vars(ID))
-
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 ggsave(plot=last_plot(),filename="Acummtime_ind_trial_males.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(males3, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity", fill="#984ea3") + 
+ggplot(males3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#984ea3") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Males all together")
@@ -423,17 +429,18 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_males.jpg",  path="Outputs/Exp
 ## Accumulated proportional time
 
 ### By individual
-ggplot(males2, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity",  fill="#984ea3") + 
+ggplot(males2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Males by ID")+
-  facet_wrap(vars(ID))
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Males by ID")+
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_males.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(males3, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity", fill="#984ea3") + 
+ggplot(males3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#984ea3") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Males all together")
@@ -449,11 +456,11 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_trial_males.jpg",  path="Outputs
 females<-beh %>% filter(stage=="Female")
 
 females2<-females%>%
-  group_by(ID, meantemptrial, zone) %>%
+  group_by(ID, meantemptrial, zone, trial.x) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 females3<-females%>%
-  group_by(meantemptrial, zone) %>%
+  group_by(meantempall, zone) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 
@@ -461,17 +468,18 @@ females3<-females%>%
 ## Accumulated time
 
 ### By individual
-ggplot(females2, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity",  fill="#377eb8") + 
+ggplot(females2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Females by ID")+
-  facet_wrap(vars(ID))
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtime_ind_trial_females.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(females3, aes(x=meantemptrial, y=time)) +geom_bar(stat="identity", fill="#377eb8") + 
+ggplot(females3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#377eb8") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Females all together")
@@ -482,17 +490,18 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_females.jpg",  path="Outputs/E
 ## Accumulated proportional time
 
 ### By individual
-ggplot(females2, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity",  fill="#377eb8") + 
+ggplot(females2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Females by ID")+
-  facet_wrap(vars(ID))
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
+  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Females by ID")+
+  labs(fill="Trial")+ 
+  facet_wrap(vars(ID), scales="fixed")
 
 ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_females.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ### Total among all individuals
-ggplot(females3, aes(x=meantemptrial, y=proptime)) +geom_bar(stat="identity", fill="#377eb8") + 
+ggplot(females3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#377eb8") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Females all together")
@@ -522,7 +531,7 @@ t22<-t2%>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 t23<-t2%>%
-  group_by(stage,meantemptrial, zone) %>%
+  group_by(stage,meantempall, zone) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 levels(t22$stage)
@@ -540,7 +549,7 @@ ggsave(plot=last_plot(),filename="Acummtime_ind_trial_2.jpg",  path="Outputs/Exp
 
 
 ### Total among all individuals
-ggplot(t23, aes(x=meantemptrial, y=time, fill=stage)) +geom_bar(stat="identity") + 
+ggplot(t23, aes(x=meantempall, y=time, fill=stage)) +geom_bar(stat="identity") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2")+
@@ -565,7 +574,7 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_2.jpg",  path="Outputs
 
 
 ### Total among all individuals
-ggplot(t23, aes(x=meantemptrial, y=time, fill=stage)) +geom_bar(stat="identity") + 
+ggplot(t23, aes(x=meantempall, y=time, fill=stage)) +geom_bar(stat="identity") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
   xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2")+
