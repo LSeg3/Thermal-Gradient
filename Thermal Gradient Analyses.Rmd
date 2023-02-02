@@ -161,13 +161,25 @@ beh<-rbind(df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11)
 
 beh<-beh %>% 
   filter(zone!="End") %>%
-  mutate(proptime=time/totalduration)
+  mutate(proptime=time/totalduration)  %>%
+  mutate(half=case_when(
+    zonegradient<7~"Colder",
+    zonegradient>7~"Hotter",
+   TRUE~"Middle"))
 
 beh$stage <- fct_relevel(beh$stage, "Protonymph", "Deutonymph", "Tritonymph",  "Male", "Female")
 levels(beh$stage) # new col is not attached so must use data$
 
 # Colors
 colors<-c("#ff7f00", "#e41a1c", "#a65628",  "#984ea3", "#377eb8")
+
+
+ggplot(beh, aes(y=time, x=half, color=stage))+
+    geom_boxplot() +
+  scale_color_manual(values=colors)+
+  facet_wrap(~stage)
+
+ggsave(plot=last_plot(),filename="boxplot_half_stages.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 ```
 
@@ -645,6 +657,200 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_trial_2.jpg",  path="Outputs/Exp
 ```
 
 
+# Dividing between hot and cold
+
+## Protonymphs
+```{r, eval=FALSE, echo=FALSE}
+### Protonymphs
+protoshc<-protos%>%
+  group_by(half) %>%
+  summarize(timesum=sum(time), proptimesum=sum(proptime), timeav=mean(time),timesd=sd(time), n=length(time), proptimeav=mean(proptime), proptimesd=sd(proptime), n2=length(proptime)) %>%
+  mutate(timese=timesd/sqrt(n),
+         timeav2=timesum/n,
+         timese=timesd/sqrt(n),
+         proptimese=proptimesd/sqrt(n2))
+
+ggplot(protoshc, aes(y=timesum, x=half))+
+  geom_bar(stat="identity",fill=colors[1])+
+   theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("Protonymphs")
+ggsave(plot=last_plot(),filename="Half_proto_ttime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(protoshc, aes(y=proptimesum, x=half))+
+  geom_bar(stat="identity",fill=colors[1])+ theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("Protonymphs")
+ggsave(plot=last_plot(),filename="Half_proto_proptime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+ggplot(protoshc, aes(y=timeav, x=half))+
+    geom_jitter(protos, mapping=aes(x=half, y=time),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[1], size=3) +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
+                 position=position_dodge(.9), color=colors[1])  + theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("Protonymphs")
+ggsave(plot=last_plot(),filename="Half_proto_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(protoshc, aes(y=timeav, x=half))+
+    #geom_jitter(protos, mapping=aes(x=half, y=time),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[1], size=3) +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
+                 position=position_dodge(.9), color=colors[1]) +  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("Protonymphs")
+ggsave(plot=last_plot(),filename="Half_proto_avtime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(protoshc, aes(y=proptimeav, x=half))+
+    geom_jitter(protos, mapping=aes(x=half, y=proptime),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[1], size=3) +geom_errorbar(aes(ymin=proptimeav-proptimese, ymax=proptimeav+proptimese), width=.2,
+                 position=position_dodge(.9), color=colors[1])  + theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("Protonymphs")
+ggsave(plot=last_plot(),filename="Half_proto_avproptime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(protoshc, aes(y=proptimeav, x=half))+
+    #geom_jitter(protos, mapping=aes(x=half, y=time),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[1], size=3) +geom_errorbar(aes(ymin=proptimeav-proptimese, ymax=proptimeav+proptimese), width=.2,
+                 position=position_dodge(.9), color=colors[1]) +  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("Protonymphs")
+ggsave(plot=last_plot(),filename="Half_proto_avproptime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+
+
+```
+## Deutonymphs
+```{r, eval=FALSE, echo=FALSE}
+
+deutoshc<-deutos%>%
+  group_by(half) %>%
+  summarize(timesum=sum(time), proptimesum=sum(proptime), timeav=mean(time),timesd=sd(time), n=length(time), proptimeav=mean(proptime), proptimesd=sd(proptime), n2=length(proptime)) %>%
+  mutate(timese=timesd/sqrt(n),
+         timeav2=timesum/n,
+         timese=timesd/sqrt(n),
+         proptimese=proptimesd/sqrt(n2))
+
+ggplot(deutoshc, aes(y=timesum, x=half))+
+  geom_bar(stat="identity",fill=colors[2])+
+   theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("deutonymphs")
+ggsave(plot=last_plot(),filename="Half_deuto_ttime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(deutoshc, aes(y=proptimesum, x=half))+
+  geom_bar(stat="identity",fill=colors[2])+ theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("deutonymphs")
+ggsave(plot=last_plot(),filename="Half_deuto_proptime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+ggplot(deutoshc, aes(y=timeav, x=half))+
+    geom_jitter(deutos, mapping=aes(x=half, y=time),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[2], size=3) +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
+                 position=position_dodge(.9), color=colors[2])  + theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("deutonymphs")
+ggsave(plot=last_plot(),filename="Half_deuto_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(deutoshc, aes(y=timeav, x=half))+
+    #geom_jitter(deutos, mapping=aes(x=half, y=time),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[2], size=3) +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
+                 position=position_dodge(.9), color=colors[2]) +  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("deutonymphs")
+ggsave(plot=last_plot(),filename="Half_deuto_avtime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(deutoshc, aes(y=proptimeav, x=half))+
+    geom_jitter(deutos, mapping=aes(x=half, y=proptime),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[2], size=3) +geom_errorbar(aes(ymin=proptimeav-proptimese, ymax=proptimeav+proptimese), width=.2,
+                 position=position_dodge(.9), color=colors[2])  + theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("deutonymphs")
+ggsave(plot=last_plot(),filename="Half_deuto_avproptime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(deutoshc, aes(y=proptimeav, x=half))+
+    #geom_jitter(deutos, mapping=aes(x=half, y=time),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(color=colors[2], size=3) +geom_errorbar(aes(ymin=proptimeav-proptimese, ymax=proptimeav+proptimese), width=.2,
+                 position=position_dodge(.9), color=colors[2]) +  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ ggtitle("deutonymphs")
+ggsave(plot=last_plot(),filename="Half_deuto_avproptime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+
+
+```
+
+
+## All stages at once
+```{r}
+behch<-beh%>%
+  group_by(stage,half) %>%
+  summarize(timesum=sum(time), proptimesum=sum(proptime), timeav=mean(time),timesd=sd(time), n=length(time), proptimeav=mean(proptime), proptimesd=sd(proptime), n2=length(proptime)) %>%
+  mutate(timese=timesd/sqrt(n),
+         timeav2=timesum/n,
+         timese=timesd/sqrt(n),
+         proptimese=proptimesd/sqrt(n2))
+
+ggplot(behch, aes(y=timesum, x=half, fill=stage))+
+  geom_bar(stat="identity")+
+  scale_fill_manual(values=colors)+
+   theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+  facet_wrap(~stage)
+ggsave(plot=last_plot(),filename="Half_all_ttime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(behch, aes(y=proptimesum, x=half, fill=stage))+
+  scale_fill_manual(values=colors)+
+  geom_bar(stat="identity")+ 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+facet_wrap(~stage)
+  ggsave(plot=last_plot(),filename="Half_all_proptime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+ggplot(behch, aes(y=timeav, x=half, color=stage))+
+    geom_jitter(beh, mapping=aes(x=half, y=time, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(size=3, color="black") +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
+                 position=position_dodge(.9), color="black")  + theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+  facet_wrap(~stage)
+ggsave(plot=last_plot(),filename="Half_all_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(behch, aes(y=timeav, x=half, color=stage))+
+    geom_point(size=3) +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
+                 position=position_dodge(.9))  + theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+  facet_wrap(~stage)
+ggsave(plot=last_plot(),filename="Half_all_avtime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(behch, aes(y=proptimeav, x=half, color=stage))+
+    geom_jitter(beh, mapping=aes(x=half, y=proptime, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(size=3, color="black") +geom_errorbar(aes(ymin=proptimeav-proptimese, ymax=proptimeav+proptimese), width=.2,
+                 position=position_dodge(.9), color="black")  + theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+  facet_wrap(~stage)
+ggsave(plot=last_plot(),filename="Half_all_avproptime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+ggplot(behch, aes(y=proptimeav, x=half, color=stage))+
+     geom_point(size=3) +geom_errorbar(aes(ymin=proptimeav-proptimese, ymax=proptimeav+proptimese), width=.2,
+                 position=position_dodge(.9))  + theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+  facet_wrap(~stage)
+ggsave(plot=last_plot(),filename="Half_all_avproptime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+ 
+
+
+
+```
+
+
+```{r}
+
+```
 
 
 
