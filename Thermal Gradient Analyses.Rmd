@@ -215,6 +215,9 @@ beh<-beh%>%
   filter(!ID %in% c(311, 56)) %>%
   filter(zone!="End")
 
+beh2%>% group_by(stage) %>% summarize(n=n_distinct(ID))
+
+
 levels(as.factor(beh1$ID))
 levels(as.factor(beh$ID))
 #NOTE: now the beh dataframe has all the trimmed values 
@@ -222,14 +225,6 @@ levels(as.factor(beh$ID))
 ```
 
 
-
-# Organizing data for getting the temperature they spent most time at
-```{r}
-behpref<-beh %>%
-   filter(zone!="Non visible") %>%
-  group_by( ID) %>%
-  filter(time==max(time))
-```
 
 
 
@@ -750,8 +745,11 @@ behlines<-behlinesprep %>%
   group_by(stage, ID) %>%
   summarize(explore=sum(lines))
 
+levels(as.factor(df$ID))
 levels(as.factor(beh$ID))
 levels(as.factor(behlines$ID))
+
+
 
 ```
 
@@ -764,20 +762,90 @@ behl<-behlines%>%
   mutate(expse=expsd/sqrt(n),
          expse=expsd/sqrt(n))
 
-ggplot(behch, aes(y=timeav, x=half, color=stage))+
-    geom_jitter(beh, mapping=aes(x=half, y=time, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
-  geom_point(size=3, color="black") +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
-                 position=position_dodge(.9), color="black")  + theme_classic()+
+ggplot(behl, aes(y=expav, x=stage) )+
+    geom_point(behlines, mapping=aes(x=stage, y=explore, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(size=3, color="black", position=position_nudge(x=0.2)) +geom_errorbar(aes(ymin=expav-expse, ymax=expav+expse), width=.2,
+                 position=position_nudge(x=0.2), color="black")  + theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
-ggsave(plot=last_plot(),filename="Half_all_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+
+ggsave(plot=last_plot(),filename="Exploration.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 ```
 
 
+# Looking at temperature with most time spent
+## Organizing data for getting the temperature they spent most time at
+```{r}
+behpref<-beh %>%
+   filter(zone!="Non visible") %>%
+  group_by( ID) %>%
+  filter(time==max(time))
 
-#########################################################################################################################################################################
+
+
+```
+
+## Plotting
+
+
+```{r}
+
+behp<-behpref%>%
+  group_by(stage) %>%
+  summarize(meantrial=mean(meantemptrial),trialsd=sd(meantemptrial), n=length(meantemptrial),meanall=mean(meantempall),allsd=sd(meantempall), n2=length(meantempall)) %>%
+  mutate(trialse=trialsd/sqrt(n),
+         allse=allsd/sqrt(n2))
+
+# For trial temps
+ggplot(behp, aes(y=meantrial, x=stage) )+
+    geom_jitter(behpref, mapping=aes(x=stage, y=meantemptrial, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(size=3, color="black", position=position_nudge(x=0.2)) +geom_errorbar(aes(ymin=meantrial-trialse, ymax=meantrial+trialse), width=.2,
+                 position=position_nudge(x=0.2), color="black")  + theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+
+ggsave(plot=last_plot(),filename="Pref_trialtemps.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+ggplot(behpref, aes(x=stage, y=meantemptrial, color=stage)) +
+  geom_boxplot() +
+  theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+ggsave(plot=last_plot(),filename="Pref_trialtemps_boxplot.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+# For all temps
+ggplot(behp, aes(y=meanall, x=stage) )+
+    geom_jitter(behpref, mapping=aes(x=stage, y=meantempall, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(size=3, color="black", position=position_nudge(x=0.2)) +geom_errorbar(aes(ymin=meanall-allse, ymax=meanall+allse), width=.2,
+                 position=position_nudge(x=0.2), color="black")  + theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+
+ggsave(plot=last_plot(),filename="Pref_alltemps.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+ggplot(behpref, aes(x=stage, y=meantempall, color=stage)) +
+  geom_boxplot() +
+  theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+
+ggsave(plot=last_plot(),filename="Pref_alltemps_boxplot.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+```
+```
+
+
+
+
+
+
+
+
+# ###############################################################################################################################################################################
+
 
 # IGNORE: Draft pieces of code
 
