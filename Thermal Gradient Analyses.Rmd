@@ -157,7 +157,7 @@ df11<- df %>%
 
 ```
 
-# Merging all files together and adding "halves" division 
+## Merging all files together and adding "halves" division 
 ```{r}
 beh1<-rbind(df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11)
 beh1%>% group_by(stage) %>% summarize(n=n_distinct(ID))
@@ -197,7 +197,7 @@ levels(beh1$sides) # new col is not attached so must use data$
 ```
 
 
-# Triming so that all trials are the same length and removing escapees
+## Triming so that all trials are the same length and removing escapees
 ```{r}
 # I want all trials to be 59 minutes, or 3540 sec. So I filtered out all the rows that are above that duration and added a final row with the final value (3450sec)
 beh2<-beh1 %>%
@@ -224,12 +224,7 @@ levels(as.factor(beh$ID))
 
 ```
 
-
-
-
-
-
-
+## Plotting to see if there are any weird (negrative) values
 ```{r}
 # Colors
 colors<-c("#ff7f00", "#e41a1c", "#a65628",  "#984ea3", "#377eb8")
@@ -245,8 +240,7 @@ ggplot(beh, aes(y=time, x=half, color=stage))+
 ggsave(plot=last_plot(),filename="boxplot_half_stages.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 ```
-
-# Plotting
+# Assessing data
 
 ## Looking at temperatures across trials
 
@@ -285,6 +279,7 @@ ggplot() +
 
 ## Checking for biases on arena sides (left vs right side for the warmer end)
 
+### Plots
 ```{r}
 # Colors
 colors<-c("#ff7f00", "#e41a1c", "#a65628",  "#984ea3", "#377eb8")
@@ -296,7 +291,7 @@ ggplot(beh, aes(y=time, x=sides, color=stage))+
   scale_color_manual(values=colors)+
     theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
+  facet_wrap(~stage) + xlab("Side of the arena")+  ylab("Time spent (s)")
 
 ggsave(plot=last_plot(),filename="boxplot_sides_stages.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -313,7 +308,7 @@ ggplot(behch, aes(y=timesum, x=sides, fill=stage))+
   scale_fill_manual(values=colors)+
    theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
+  facet_wrap(~stage)  + xlab("Side of the arena")+  ylab("Cumulative time (s)")
 ggsave(plot=last_plot(),filename="Sides_all_ttime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
 
@@ -324,7 +319,7 @@ ggplot(behch, aes(y=timeav, x=sides, color=stage))+
                  position=position_dodge(.9), color="black")  + theme_classic()+
   scale_color_manual(values=colors)+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
+  facet_wrap(~stage)  + xlab("Side of the arena")+  ylab("Mean time (s)")
 ggsave(plot=last_plot(),filename="Sides_all_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
 
@@ -333,7 +328,7 @@ ggplot(behch, aes(y=timeav, x=sides, color=stage))+
                  position=position_dodge(.9))  + theme_classic()+
   scale_color_manual(values=colors)+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
+  facet_wrap(~stage)  + xlab("Side of the arena")+  ylab("Mean time (s)")
 ggsave(plot=last_plot(),filename="Sides_all_avtime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
 
@@ -347,7 +342,7 @@ behch2<-beh%>%
 
 ggplot(behch2, aes(y=timesum, x=sides))+
   geom_bar(stat="identity")+ theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")  + xlab("Side of the arena")+  ylab("Cumulative time (s)")
 
 ggsave(plot=last_plot(),filename="Sides_together_ttime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
@@ -358,15 +353,15 @@ ggplot(behch2, aes(y=timeav, x=sides))+
   geom_point(size=3, color="black") +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
                  position=position_dodge(.9), color="black")  + theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
-ggsave(plot=last_plot(),filename="Sides_together_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none") + xlab("Side of the arena")+  ylab("Time (s)")
+ggsave(plot=last_plot(),filename="Sides_together_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in") 
  
 
 ggplot(behch2, aes(y=timeav, x=sides))+
     geom_point(size=3) +geom_errorbar(aes(ymin=timeav-timese, ymax=timeav+timese), width=.2,
                  position=position_dodge(.9))  + theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")  + xlab("Side of the arena")+  ylab("Mean time (s)")
 ggsave(plot=last_plot(),filename="Sides_together_avtime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
 
@@ -374,11 +369,78 @@ ggsave(plot=last_plot(),filename="Sides_together_avtime2.jpg",  path="Outputs/Ex
 
 ```
 
+### Binomial test
+```{r}
+# Per individual
+
+side2<- beh %>%
+  group_by(stage, ID, sides) %>%
+  summarize(timesum=sum(time)) 
+
+side3<-complete(side2, sides, fill=list(timesum=0)) %>%
+  filter(!sides %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+  filter(sides=="Left") %>%
+  filter(ID !=45)
+
+## Getting a p-vaue for each individual
+bt <- function(a, b, p = 0.5) {binom.test(a, b, 0.5, alternative=
+                            c("two.sided"), conf.level = 0.95)$p.value}
+side3$pval <- mapply(bt, side3$timesum, side3$ttime)
+
+
+
+## Plotting P-values
+ggplot(side3, aes(y=pval, x=sides, color=stage)) +geom_jitter() + geom_hline(yintercept=0.05, linetype="dashed")
+
+
+# all together
+side2<- beh %>%
+  group_by(sides) %>%
+  summarize(timesum=sum(time)) 
+
+side3<-complete(side2, sides, fill=list(timesum=0)) %>%
+  filter(!sides %in% c("Middle", "NA") )%>%
+  mutate(ttime=sum(timesum))# %>%
+  #filter(sides=="Left")
+
+side3$pval <- binom.test(side3$timesum, side3$ttime, 0.5)$p.value
+
+bt1<-binom.test(261198, 509639	, 0.5)
+binom.test(248441, 509639	, 0.5)
+
+bt1$p.value
+
+# Both sides differ from 50%
+
+```
+
+### Anova / comparing means 
+```{r}
+
+# Comparing mean time per "stay" per ID
+m1<-lm(timeav~sides, data=behch)
+summary(m1)
+NRES803::check_assumptions(m1)
+
+# Comparing cumulative time per ID
+m2<-lm(timesum~sides+stage, data=behch)
+summary(m2)
+NRES803::check_assumptions(m2)
+
+
+
+
+
+```
+
+
 
 
 ## Total time spent on each temperature zone 
 
-### Accumulated time per ID and stage 
+### Cumulative time per ID and stage 
 
 #### Data prep
 
@@ -418,6 +480,11 @@ females2<-females%>%
   group_by(ID, meantemptrial, zone, trial.x) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
+# All stages in a single frame
+cumtime<-beh %>%
+  group_by(stage, ID, meantempall, zone, trial.x) %>%
+  summarize(time=sum(time))
+
 
 ```
 
@@ -432,7 +499,7 @@ females2<-females%>%
 ggplot(protos2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(1, "mm"), strip.text.x = element_text(size=8, face="bold"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Protonymphs by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Protonymphs by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed") + geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -443,7 +510,7 @@ ggsave(plot=last_plot(),filename="Acummtime_ind_trial_Protos.jpg",  path="Output
 ggplot(deutos2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(1, "mm"), strip.text.x = element_text(size=8, face="bold"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Deutonymphs by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Deutonymphs by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -456,7 +523,7 @@ ggsave(plot=last_plot(),filename="Acummtime_ind_trial_Deutos.jpg",  path="Output
 ggplot(tritos2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
    theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(1, "mm"), strip.text.x = element_text(size=8, face="bold"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Tritonymphs by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Tritonymphs by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -469,7 +536,7 @@ ggsave(plot=last_plot(),filename="Acummtime_ind_trial_tritos.jpg",  path="Output
 ggplot(males2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(1, "mm"), strip.text.x = element_text(size=8, face="bold"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Males by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Males by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 ggsave(plot=last_plot(),filename="Acummtime_ind_trial_males.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
@@ -479,7 +546,7 @@ ggsave(plot=last_plot(),filename="Acummtime_ind_trial_males.jpg",  path="Outputs
 ggplot(females2, aes(x=meantemptrial, y=time, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(1, "mm"), strip.text.x = element_text(size=8, face="bold"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Females by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Females by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -493,7 +560,7 @@ ggsave(plot=last_plot(),filename="Acummtime_ind_trial_females.jpg",  path="Outpu
 
 
 
-### Accumulated total time
+### Cumulative total time
 
 #### Data prep
 
@@ -526,6 +593,12 @@ females3<-females%>%
   group_by(meantempall, zonegradient) %>%
   summarize(time=sum(time), proptime=sum(proptime))
 
+### All stages in single dataframe
+cumtime2<-beh%>%
+  group_by(stage, meantempall, zonegradient) %>%
+  summarize(time=sum(time))
+
+
 
 ```
 
@@ -539,7 +612,7 @@ females3<-females%>%
 ggplot(protos3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#ff7f00") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Protonymphs all together")
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Protonymphs all together")
 
 ggsave(plot=last_plot(),filename="Acummtime_trial_Protos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -547,7 +620,7 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_Protos.jpg",  path="Outputs/Ex
 ggplot(deutos3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#e41a1c") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Deutonymphs all together")
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Deutonymphs all together")
 
 ggsave(plot=last_plot(),filename="Acummtime_trial_Deutos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -555,7 +628,7 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_Deutos.jpg",  path="Outputs/Ex
 ggplot(tritos3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#a65628") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Tritonymphs all together")
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Tritonymphs all together")
 
 ggsave(plot=last_plot(),filename="Acummtime_trial_tritos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -563,7 +636,7 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_tritos.jpg",  path="Outputs/Ex
 ggplot(males3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#984ea3") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Males all together")
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Males all together")
 
 ggsave(plot=last_plot(),filename="Acummtime_trial_males.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -571,11 +644,22 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_males.jpg",  path="Outputs/Exp
 ggplot(females3, aes(x=meantempall, y=time)) +geom_bar(stat="identity", fill="#377eb8") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Females all together")
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Females all together")
 
 ggsave(plot=last_plot(),filename="Acummtime_trial_females.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
+# All together
+ggplot(cumtime2, aes(x=meantempall, y=time)) + geom_bar(stat="identity", aes(fill=stage)) + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("All together by stage") +
+  scale_fill_manual(values=colors) +
+  facet_wrap(vars(stage))+ geom_vline(xintercept=35, linetype="dashed", color="black")
+
+ggsave(plot=last_plot(),filename="Acummtime_trial_all.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
 ```
 
 
@@ -583,51 +667,7 @@ ggsave(plot=last_plot(),filename="Acummtime_trial_females.jpg",  path="Outputs/E
 
 
 
-```{r}
-### Protonymphs
-ggplot(protos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#ff7f00") + 
-  theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Protonymphs all together")
 
-ggsave(plot=last_plot(),filename="Acummtimeprop_trial_Protos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
-
-### Deutonymphs
-ggplot(deutos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#e41a1c") + 
-  theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Deutonymphs all together")
-ggsave(plot=last_plot(),filename="Acummtimeprop_trial_Deutos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
-
-
-### Tritonymphs
-ggplot(tritos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#a65628") + 
-  theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Tritonymphs all together")
-
-ggsave(plot=last_plot(),filename="Acummtimeprop_trial_tritos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
-
-
-### Males
-ggplot(males3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#984ea3") + 
-  theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Males all together")
-
-ggsave(plot=last_plot(),filename="Acummtimeprop_trial_males.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
-
-### Females
-ggplot(females3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#377eb8") + 
-  theme_classic()+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated proportional time")+ ggtitle("Females all together")
-
-ggsave(plot=last_plot(),filename="Acummtimeprop_trial_females.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
-
-
-
-```
 
 
 ## Average time spent
@@ -640,9 +680,6 @@ protos3<-protos%>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 
-behav<-beh%>%
-  group_by(stage, ID, meantempall, zone) %>%
-  summarize(avtime=mean(time))
 
 behav3<-beh%>%
   group_by(stage, meantempall, zonegradient) %>%
@@ -698,7 +735,7 @@ ggplot(behch, aes(y=timesum, x=half, fill=stage))+
   scale_fill_manual(values=colors)+
    theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
+  facet_wrap(~stage) + xlab("Position in arena")+  ylab("Cumulative time (s)")
 ggsave(plot=last_plot(),filename="Half_all_ttime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
 
@@ -709,7 +746,7 @@ ggplot(behch, aes(y=timeav, x=half, color=stage))+
                  position=position_dodge(.9), color="black")  + theme_classic()+
   scale_color_manual(values=colors)+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
+  facet_wrap(~stage) + xlab("Position in arena")+  ylab("Time spent (s)")
 ggsave(plot=last_plot(),filename="Half_all_avtime.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
 
@@ -718,7 +755,7 @@ ggplot(behch, aes(y=timeav, x=half, color=stage))+
                  position=position_dodge(.9))  + theme_classic()+
   scale_color_manual(values=colors)+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
-  facet_wrap(~stage)
+  facet_wrap(~stage)+ xlab("Position in arena")+  ylab("Mean time (s)")
 ggsave(plot=last_plot(),filename="Half_all_avtime2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
  
 
@@ -767,7 +804,7 @@ ggplot(behl, aes(y=expav, x=stage) )+
   geom_point(size=3, color="black", position=position_nudge(x=0.2)) +geom_errorbar(aes(ymin=expav-expse, ymax=expav+expse), width=.2,
                  position=position_nudge(x=0.2), color="black")  + theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none") + xlab("Stage")+  ylab("Number of zones crossed")
 
 ggsave(plot=last_plot(),filename="Exploration.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -777,20 +814,27 @@ ggsave(plot=last_plot(),filename="Exploration.jpg",  path="Outputs/Exploratory p
 # Looking at temperature with most time spent
 ## Organizing data for getting the temperature they spent most time at
 ```{r}
+# Extractng, per Id and Trial, which zone did they spent most time at in a single "stay"?
 behpref<-beh %>%
    filter(zone!="Non visible") %>%
   group_by( ID) %>%
   filter(time==max(time))
 
+# Extracting which zone each Individiual spent most time at in total
+cumpref<-cumtime %>%
+  filter(zone!="Non visible") %>%
+  group_by( ID) %>%
+  filter(time==max(time))
 
 
 ```
 
 ## Plotting
 
+### Preference per "single stay" 
 
 ```{r}
-
+# Preference per single stay
 behp<-behpref%>%
   group_by(stage) %>%
   summarize(meantrial=mean(meantemptrial),trialsd=sd(meantemptrial), n=length(meantemptrial),meanall=mean(meantempall),allsd=sd(meantempall), n2=length(meantempall)) %>%
@@ -803,7 +847,7 @@ ggplot(behp, aes(y=meantrial, x=stage) )+
   geom_point(size=3, color="black", position=position_nudge(x=0.2)) +geom_errorbar(aes(ymin=meantrial-trialse, ymax=meantrial+trialse), width=.2,
                  position=position_nudge(x=0.2), color="black")  + theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ xlab("Stage")+  ylab("Temperature (Celsius)")
 
 ggsave(plot=last_plot(),filename="Pref_trialtemps.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -811,7 +855,7 @@ ggplot(behpref, aes(x=stage, y=meantemptrial, color=stage)) +
   geom_boxplot() +
   theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none") + xlab("Stage")+  ylab("Temperature (Celsius)")
 ggsave(plot=last_plot(),filename="Pref_trialtemps_boxplot.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
@@ -821,7 +865,7 @@ ggplot(behp, aes(y=meanall, x=stage) )+
   geom_point(size=3, color="black", position=position_nudge(x=0.2)) +geom_errorbar(aes(ymin=meanall-allse, ymax=meanall+allse), width=.2,
                  position=position_nudge(x=0.2), color="black")  + theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none") + xlab("Stage")+  ylab("Temperature (Celsius)")
 
 ggsave(plot=last_plot(),filename="Pref_alltemps.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
@@ -829,15 +873,44 @@ ggplot(behpref, aes(x=stage, y=meantempall, color=stage)) +
   geom_boxplot() +
   theme_classic()+
   scale_color_manual(values=colors)+
-  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none") + xlab("Stage")+  ylab("Temperature (Celsius)")
 
 ggsave(plot=last_plot(),filename="Pref_alltemps_boxplot.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
 ```
+
+### Preference per "cumulative stay"  
+
+```{r}
+
+cumpref2<-cumpref %>%
+  group_by(stage) %>%
+  summarize(meanall=mean(meantempall),allsd=sd(meantempall), n=length(meantempall)) %>%
+  mutate(allse=allsd/sqrt(n))
+
+# For all temps
+ggplot(cumpref2, aes(y=meanall, x=stage) )+
+    geom_jitter(cumpref, mapping=aes(x=stage, y=meantempall, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(size=3, color="black", position=position_nudge(x=0.2)) +geom_errorbar(aes(ymin=meanall-allse, ymax=meanall+allse), width=.2,
+                 position=position_nudge(x=0.2), color="black")  + theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ xlab("Stage")+  ylab("Temperature (Celsius)")
+
+ggsave(plot=last_plot(),filename="Prefcum_alltemps.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+ggplot(cumpref, aes(x=stage, y=meantempall, color=stage)) +
+  geom_boxplot() +
+  theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none") + xlab("Stage")+  ylab("Temperature (Celsius)")
+ggsave(plot=last_plot(),filename="Prefcum_alltemps_boxplot.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+
+
 ```
-
-
 
 
 
@@ -858,7 +931,7 @@ ggsave(plot=last_plot(),filename="Pref_alltemps_boxplot.jpg",  path="Outputs/Exp
 ggplot(protos2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Protonymphs by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Protonymphs by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -870,7 +943,7 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_Protos.jpg",  path="Ou
 ggplot(deutos2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Deutonymphs by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Deutonymphs by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -883,7 +956,7 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_Deutos.jpg",  path="Ou
 ggplot(tritos2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Tritonymphs by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Tritonymphs by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -897,7 +970,7 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_tritos.jpg",  path="Ou
 ggplot(males2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Males by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Males by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -910,7 +983,7 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_males.jpg",  path="Out
 ggplot(females2, aes(x=meantemptrial, y=proptime, fill=as.factor(trial.x))) +geom_bar(stat="identity", width=1) + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"))+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Females by ID")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Females by ID")+
   labs(fill="Trial")+ 
   facet_wrap(vars(ID), scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
@@ -919,7 +992,7 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_females.jpg",  path="O
 
 ```
 
-#### Plots: proportional accumulated time
+#### Plots: proportional Cumulative time
 
 ```{r}
 acum<-beh %>%
@@ -930,7 +1003,7 @@ ggplot(acum, aes(x=meantempall, y=acumsum, fill=stage)) +geom_bar(stat="identity
   theme_classic()+
   scale_fill_manual(values=colors)+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated total time")+ 
+  xlab("Temperature (Celsius)")+  ylab("Cumulative total time")+ 
   facet_wrap(~stage, scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
 ggsave(plot=last_plot(),filename="Acummtime_all.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
@@ -939,7 +1012,7 @@ ggplot(acum, aes(x=meantempall, y=acumprop, fill=stage)) +geom_bar(stat="identit
   theme_classic()+
   scale_fill_manual(values=colors)+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated prop time")+ 
+  xlab("Temperature (Celsius)")+  ylab("Cumulative prop time")+ 
   facet_wrap(~stage, scales="fixed")+ geom_vline(xintercept=35, linetype="dashed", color="black")
 
 ggsave(plot=last_plot(),filename="Acummproptime_all.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
@@ -955,6 +1028,56 @@ ggsave(plot=last_plot(),filename="Raw_all.jpg",  path="Outputs/Exploratory plots
 
 
 ```
+
+
+
+```{r}
+### Protonymphs
+ggplot(protos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#ff7f00") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative proportional time")+ ggtitle("Protonymphs all together")
+
+ggsave(plot=last_plot(),filename="Acummtimeprop_trial_Protos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+### Deutonymphs
+ggplot(deutos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#e41a1c") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative proportional time")+ ggtitle("Deutonymphs all together")
+ggsave(plot=last_plot(),filename="Acummtimeprop_trial_Deutos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+### Tritonymphs
+ggplot(tritos3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#a65628") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative proportional time")+ ggtitle("Tritonymphs all together")
+
+ggsave(plot=last_plot(),filename="Acummtimeprop_trial_tritos.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+### Males
+ggplot(males3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#984ea3") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative proportional time")+ ggtitle("Males all together")
+
+ggsave(plot=last_plot(),filename="Acummtimeprop_trial_males.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+### Females
+ggplot(females3, aes(x=meantempall, y=proptime)) +geom_bar(stat="identity", fill="#377eb8") + 
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative proportional time")+ ggtitle("Females all together")
+
+ggsave(plot=last_plot(),filename="Acummtimeprop_trial_females.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+
+```
+
+
 ## Per trial
 
 
@@ -971,13 +1094,13 @@ t23<-t2%>%
   summarize(time=sum(time), proptime=sum(proptime))
 
 levels(t22$stage)
-## Accumulated time
+## Cumulative time
 
 ### By individual
 ggplot(t22, aes(x=meantemptrial, y=time, fill=stage)) +geom_bar(stat="identity") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2 per ind")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Trial 2 per ind")+
   scale_fill_manual(values=colors)+
   facet_wrap(vars(ID))
 
@@ -988,21 +1111,21 @@ ggsave(plot=last_plot(),filename="Acummtime_ind_trial_2.jpg",  path="Outputs/Exp
 ggplot(t23, aes(x=meantempall, y=time, fill=stage)) +geom_bar(stat="identity") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Trial 2")+
   scale_fill_manual(values=colors) +
   facet_wrap(vars(stage))
 
 ggsave(plot=last_plot(),filename="Acummtime_trial_2.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 
-## Accumulated proportional time
+## Cumulative proportional time
 
 ### By individual
 
 ggplot(t22, aes(x=meantemptrial, y=proptime, fill=stage)) +geom_bar(stat="identity") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)), strip.text.x = element_blank(),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2 per ind")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Trial 2 per ind")+
   scale_fill_manual(values=colors)+
   facet_wrap(vars(ID))
 
@@ -1013,7 +1136,7 @@ ggsave(plot=last_plot(),filename="Acummtimeprop_ind_trial_2.jpg",  path="Outputs
 ggplot(t23, aes(x=meantempall, y=time, fill=stage)) +geom_bar(stat="identity") + 
   theme_classic()+
   theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+
-  xlab("Temperature (Celsius)")+  ylab("Accumulated time (s)")+ ggtitle("Trial 2")+
+  xlab("Temperature (Celsius)")+  ylab("Cumulative time (s)")+ ggtitle("Trial 2")+
   scale_fill_manual(values=colors)
   facet_wrap(vars(stage))
 
