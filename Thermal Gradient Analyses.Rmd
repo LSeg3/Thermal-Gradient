@@ -430,7 +430,6 @@ side3$pval <- binom.test(side3$timesum, side3$ttime, 0.5)$p.value
 binom.test(222313	, 461943		, 0.5, alternative="greater")
 binom.test(239630	, 461943		, 0.5)
 
-bt1$p.value
 
 # Both sides differ from 50%
 
@@ -1340,6 +1339,41 @@ plot(em, comparisons = TRUE)
 
 ```
 
+## Mood's median test
+
+```{r}
+library(RVAideMemoire)
+
+mood.medtest(meantempall ~ stage,
+             data  = cumpref,
+             exact = FALSE)
+
+cumpref2<-cumpref %>%
+  group_by(stage) %>%
+  summarize(meanall=median(meantempall))
+
+# For all temps
+ggplot(cumpref2, aes(y=meanall, x=stage) )+
+    geom_jitter(cumpref, mapping=aes(x=stage, y=meantempall, color=stage),shape=1, size=3, stroke=1.2, width=0.1) +
+  geom_point(size=3, color="black", position=position_nudge(x=0.2)) +
+theme_classic()+
+  scale_color_manual(values=colors)+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ xlab("Stage")+  ylab("Temperature (Celsius)")
+
+ggsave(plot=last_plot(),filename="Prefcum_alltemps_median.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+
+
+```
+
+## Kruskal-Wallis test
+```{r}
+kruskal.test(meantempall ~ stage, data = cumpref)
+
+
+
+```
 
 
 
