@@ -427,8 +427,8 @@ side3<-complete(side2, sides, fill=list(timesum=0)) %>%
 
 side3$pval <- binom.test(side3$timesum, side3$ttime, 0.5)$p.value
 
-binom.test(261198, 509639	, 0.5, alternative="greater")
-binom.test(248441, 509639	, 0.5)
+binom.test(222313	, 461943		, 0.5, alternative="greater")
+binom.test(239630	, 461943		, 0.5)
 
 bt1$p.value
 
@@ -452,7 +452,7 @@ ggsave(plot=last_plot(),filename="Binomialall.jpg",  path="Outputs/Exploratory p
 
 ```
 
-### Anova / comparing means 
+### Anova / comparing between means 
 ```{r}
 
 # Comparing mean time per "stay" per ID
@@ -474,7 +474,103 @@ summary(m4)
 
 ```
 
+### One-sample t-test: comparing all indivdidual proportions to 50%
+```{r}
 
+side2<- beh %>%
+  filter(trial.x!=10)%>%
+  group_by(stage, ID, sides) %>%
+  summarize(timesum=sum(time)) 
+
+side3<-complete(side2, sides, fill=list(timesum=0)) %>%
+  filter(!sides %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+  filter(sides=="Left") %>%
+  mutate(proptime=timesum/ttime,
+         proptransform=log(proptime/(1-proptime)),  #logit transformation
+         proptransform2=asin(sqrt(proptime))) %>% #arcsine transformation
+  filter(proptime!=0) %>%
+  filter(proptime!=1)
+
+t.test(side3$proptime, mu=0.5, alternative="two.sided")
+t.test(side3$proptransform, mu=log(0.5/(1-0.5)), alternative="two.sided") #testign with logit
+t.test(side3$proptransform2, mu=asin(sqrt(0.5)), alternative="two.sided") #testing with arcsine
+
+
+shapiro.test(side3$proptransform)
+shapiro.test(side3$proptransform2)
+
+
+
+library("ggpubr")
+ggqqplot(side3$proptime, ylab = "Proportional time",
+         ggtheme = theme_minimal())
+
+
+
+ggboxplot(side3$proptime, 
+          ylab = "Weight (g)", xlab = FALSE,
+          ggtheme = theme_minimal())
+
+
+
+# Plotting
+side3<-complete(side2, sides, fill=list(timesum=0)) %>%
+  filter(!sides %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+ # filter(sides=="Left") %>%
+  mutate(proptime=timesum/ttime) 
+
+
+
+ggplot(side3, aes(y=proptime, x=sides,  fill=sides))+
+  geom_bar(stat="summary",fun="mean", position="stack")+
+  #scale_fill_manual(values=colors)+
+   theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+   xlab("Side of the arena")+  ylab("Proportional cumulative time (s)") +geom_hline(yintercept = 0.5, linetype="dashed")
+
+
+ggplot(side3, aes(y=proptime, x=sides))+
+  stat_summary(fun.y = mean, geom = "point") + 
+stat_summary(fun.data = mean_se,  
+                 geom = "errorbar") +
+  scale_y_continuous(limits = c(0, 1))+
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+   xlab("Side of the arena")+  ylab("Proportional cumulative time (s)") +geom_hline(yintercept = 0.5, linetype="dashed")
+
+ggsave(plot=last_plot(),filename="OneSamplettest_2sides.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+# Plotting
+side3<-complete(side2, sides, fill=list(timesum=0)) %>%
+  filter(!sides %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+  filter(sides=="Left") %>%
+  mutate(proptime=timesum/ttime) 
+
+
+
+ggplot(side3, aes(y=proptime, x=sides))+
+  stat_summary(fun.y = mean, geom = "point") + 
+stat_summary(fun.data = mean_se,  
+                 geom = "errorbar") +
+  scale_y_continuous(limits = c(0, 1))+
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+   xlab("Side of the arena")+  ylab("Proportional cumulative time (s)") +geom_hline(yintercept = 0.5, linetype="dashed")
+
+ggsave(plot=last_plot(),filename="OneSamplettest_leftsides.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+
+
+```
+[http://www.sthda.com/english/wiki/one-sample-t-test-in-r#what-is-one-sample-t-test]
 
 
 ## Total time spent on each temperature zone 
@@ -902,7 +998,149 @@ ggsave(plot=last_plot(),filename="Binomialall_temp.jpg",  path="Outputs/Explorat
 
 ```
 
+### One-sample t-test: comparing all indivdidual proportions to 50%
+```{r}
+half2<- beh %>%
+  group_by(stage, ID, half) %>%
+  summarize(timesum=sum(time)) 
 
+half3<-complete(half2, half, fill=list(timesum=0)) %>%
+  filter(!half %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+  filter(half=="Hotter") %>%
+  filter(ID!=45) %>%
+  mutate(proptime=timesum/ttime)
+
+t.test(half3$proptime, mu=0.5, alternative="two.sided")
+t.test(half3$proptime, mu=0.5, alternative="greater")
+
+
+shapiro.test(half3$proptime)
+
+library("ggpubr")
+ggqqplot(half3$proptime, ylab = "Proportional time",
+         ggtheme = theme_minimal())
+
+
+
+ggboxplot(half3$proptime, 
+          ylab = "Weight (g)", xlab = FALSE,
+          ggtheme = theme_minimal())
+```
+
+### One-sample t-test: comparing all indivdidual proportions to 50%
+```{r}
+
+half2<- beh %>%
+  group_by(stage, ID, half) %>%
+  summarize(timesum=sum(time)) 
+
+half3<-complete(half2, half, fill=list(timesum=0)) %>%
+  filter(!half %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+  filter(half=="Hotter") %>%
+  filter(ID!=45) %>%
+  mutate(proptime=timesum/ttime,
+         proptransform=log(proptime/(1-proptime)),  #logit transformation
+         proptransform2=asin(sqrt(proptime)))# %>% #arcsine transformation
+  
+
+half4<-half3 %>%
+  filter(proptime!=0) %>%
+  filter(proptime!=1)
+
+
+
+
+
+
+t.test(half3$proptime, mu=0.5, alternative="two.sided")
+t.test(half4$proptransform, mu=log(0.5/(1-0.5)), alternative="two.sided") #testign with logit
+t.test(half3$proptransform2, mu=asin(sqrt(0.5)), alternative="two.sided") #testing with arcsine
+
+
+shapiro.test(half4$proptransform)
+shapiro.test(half3$proptransform2)
+
+
+
+library("ggpubr")
+ggqqplot(half3$proptransform2, ylab = "Proportional time",
+         ggtheme = theme_minimal())
+
+ggqqplot(half4$proptransform2, ylab = "Proportional time",
+         ggtheme = theme_minimal())
+
+
+ggboxplot(half3$proptime, 
+          ylab = "Weight (g)", xlab = FALSE,
+          ggtheme = theme_minimal())
+
+ggboxplot(half4$proptime, 
+          ylab = "Weight (g)", xlab = FALSE,
+          ggtheme = theme_minimal())
+
+
+# Plotting
+
+half3<-complete(half2, half, fill=list(timesum=0)) %>%
+  filter(!half %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+#filter(half=="Hotter") %>%
+  filter(ID!=45) %>%
+  mutate(proptime=timesum/ttime)
+
+ggplot(half3, aes(y=proptime, x=half,  fill=half))+
+  geom_bar(stat="summary",fun="mean", position="stack")+
+  #scale_fill_manual(values=colors)+
+   theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+   xlab("Side of the arena")+  ylab("Proportional cumulative time (s)") +geom_hline(yintercept = 0.5, linetype="dashed")
+
+
+ggplot(half3, aes(y=proptime, x=half))+
+  stat_summary(fun.y = mean, geom = "point") + 
+stat_summary(fun.data = mean_se,  
+                 geom = "errorbar") +
+  scale_y_continuous(limits = c(0, 1))+
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+   xlab("Side of the arena")+  ylab("Proportional cumulative time (s)") +geom_hline(yintercept = 0.5, linetype="dashed")
+
+ggsave(plot=last_plot(),filename="OneSamplettest_2halves.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+# Plotting
+side3<-complete(side2, sides, fill=list(timesum=0)) %>%
+  filter(!sides %in% c("Middle", "NA") )%>%
+  group_by(ID) %>%
+  mutate(ttime=sum(timesum)) %>%
+  filter(sides=="Left") %>%
+  mutate(proptime=timesum/ttime) 
+
+
+
+ggplot(side3, aes(y=proptime, x=sides))+
+  stat_summary(fun.y = mean, geom = "point") + 
+stat_summary(fun.data = mean_se,  
+                 geom = "errorbar") +
+  scale_y_continuous(limits = c(0, 1))+
+  theme_classic()+
+  theme(text = element_text(size = 15), plot.title = element_text(size = (12)),panel.spacing = unit(7, "mm"),legend.position="none")+ 
+   xlab("Side of the arena")+  ylab("Proportional cumulative time (s)") +geom_hline(yintercept = 0.5, linetype="dashed")
+
+ggsave(plot=last_plot(),filename="OneSamplettest_leftsides.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
+
+
+
+
+```
+
+
+> DO BACK transformation to get the true means and errors!!!!
 
 
 # Organizing data for exploration (line crossing)
@@ -956,6 +1194,29 @@ ggplot(behl, aes(y=expav, x=stage) )+
 ggsave(plot=last_plot(),filename="Exploration.jpg",  path="Outputs/Exploratory plots/",width=7, height=7, units="in")
 
 ```
+
+## Linear model
+```{r}
+ex1<-glm(explore~stage, data=behlines, family=poisson)
+check_assumptions(ex1)
+summary(ex1)
+
+
+library(multcomp)
+comps <- glht(ex1, linfct = mcp(stage = "Tukey"))
+summary(comps)
+
+library(emmeans)
+em <- emmeans(ex1, "stage")
+contrast(em, "pairwise", adjust = "Holm")
+
+plot(em, comparisons = TRUE)
+
+```
+
+The blue bars on the plot are the confidence intervals. The red arrowed lines represent a scheme to determine homogeneous groups. If the red lines overlap for two groups, then they are not signficantly different using the method chosen. [https://bcdudek.net/anova/beginning-to-explore-the-emmeans-package-for-post-hoc-tests-and-contrasts.html]
+
+
 
 
 # Looking at temperature with most time spent
@@ -1059,7 +1320,25 @@ ggsave(plot=last_plot(),filename="Prefcum_alltemps_boxplot.jpg",  path="Outputs/
 
 ```
 
+## Linear model
+```{r}
+p1<-glm(meantempall~stage, data=cumpref)
+check_assumptions(p1)
+summary(p1)
+shapiro.test(cumpref$meantempall)
 
+
+library(multcomp)
+comps <- glht(p1, linfct = mcp(stage = "Tukey"))
+summary(comps)
+
+library(emmeans)
+em <- emmeans(p1, "stage")
+contrast(em, "pairwise", adjust = "Holm")
+
+plot(em, comparisons = TRUE)
+
+```
 
 
 
